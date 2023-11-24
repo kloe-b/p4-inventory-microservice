@@ -7,12 +7,20 @@ bcrypt = Bcrypt()
 
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    quantity = db.Column(db.Integer, default=10,nullable=False)
-    name = db.Column(db.String, nullable=False)  # 'nullable=False' makes this field mandatory
-   
+    quantity = db.Column(db.Integer, nullable=False,default=100)
+
     def to_dict(self):
         return {
             'id': self.id,
-            'quantity': self.quantity,
-            'name' : self.name
+            'quantity': self.quantity
         }
+
+    @staticmethod
+    def get_or_create(item_id):
+        item = Item.query.get(item_id)
+        if not item:
+            item = Item(id=item_id)
+            db.session.add(item)
+            db.session.commit()
+        return item
+
